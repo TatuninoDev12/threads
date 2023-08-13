@@ -1,8 +1,38 @@
-import React from 'react'
+'use client'
+import { sidebarLinks } from '@/constants'
+import { SignOutButton, SignedIn } from '@clerk/nextjs'
+import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
 
 const LeftSidebar = () => {
+    const router = useRouter()
+    const pathname = usePathname()
     return (
-        <div>LeftSidebar</div>
+        <section className='custom-scrollbar leftsidebar'>
+            <div className='flex w-full flex-1 flex-col gap-6 px-6'>
+                {sidebarLinks.map((link) => {
+                    const isActive = (pathname.includes(link.route) && link.route.length > 1) || pathname === link.route
+
+                    return (
+                        <Link href={link.route} key={link.label} className={`${isActive && 'bg-primary-500'} leftsidebar_link`}>
+                            <img src={link.imgURL} alt={link.label} width={24} height={24} />
+                            <p className='text-light-1 mx-lg:hidden'>{link.label}</p>
+                        </Link>
+                    )
+                })
+                }
+            </div>
+            <div className='mt-10 px-6'>
+                <SignedIn>
+                    <SignOutButton signOutCallback={() => router.push('/sign-in')}>
+                        <div className='flex cursor-pointer gap-4 p-4'>
+                            <img src="/logout.svg" alt="Logout" width={24} height={24} />
+                            <p className='text-light-2 max-lg:hidden'>Logout</p>
+                        </div>
+                    </SignOutButton>
+                </SignedIn>
+            </div>
+        </section>
     )
 }
 
